@@ -1,7 +1,7 @@
 services:
   - type: web
     name: alien-terminal
-    env: python
+    runtime: python
     plan: free
     branch: main
     autoDeploy: true

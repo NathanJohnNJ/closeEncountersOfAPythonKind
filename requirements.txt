@@ -13,3 +13,4 @@ colorama==0.4.6
 
 # Pinned socket/engineio versions and Flask-SocketIO git commit matching
 # the environment where the app was validated.
+eventlet==0.33.2

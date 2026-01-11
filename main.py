@@ -22,7 +22,8 @@ app = Flask(__name__, template_folder=".", static_folder=".", static_url_path=""
 app.config["SECRET_KEY"] = "secret!"
 # Per-client PTY state: map session id -> {fd, pid}
 app.config["clients"] = {}
-socketio = SocketIO(app)
+# Use eventlet async mode when available and allow cross-origin requests from the same origin.
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 
 def set_winsize(fd, row, col, xpix=0, ypix=0):

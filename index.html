@@ -1,0 +1,295 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Close Encounters of a Python Kind</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+    </style>
+    <style>
+      html {
+        font-family: 'VT323';
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .wrapper{
+        width:675px;
+        height:410px;
+        padding: 4px 3px;
+        display:flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(45deg, dimgrey, lightgrey 80%);
+        border-radius: 20px;
+        position:relative;
+        margin-bottom: 10px;
+        box-shadow: -0.75px 0.75px 3.5px 1.5px rgba(0, 0, 0, 0.5);
+      }
+      .red, .green, .yellow{
+        border-radius: 50%;
+        width:12px;
+        height: 12px;
+        position:absolute;
+        top: 6px;
+        box-shadow: 0.25px 0.25px 0.25px 0.75px rgba(0, 0, 0, 0.5);
+      }
+      .red:hover, .yellow:hover, .green:hover{
+        box-shadow: none;
+      }
+      .red{
+        left: 18px;
+        background-color: red;
+      }
+      .yellow{
+        left: 40px;
+        background-color: rgb(245, 205, 43);
+      }
+      .green{
+        left: 62px;
+        background-color: rgb(5, 188, 5);
+      }
+      .terminalWrapper{
+        display: flex;
+        position: relative;
+      }
+      .scrollBar{
+        position:absolute;
+        right:2px;
+        top: 4px;
+        bottom: 4px;
+        width: 8px;
+        background: rgba(120,120,120,0.5);
+        border-radius: 4px;
+        display: flex;
+        align-items: flex-start;
+        overflow: hidden;
+      }
+      .scroll{
+        width: 100%;
+        background: linear-gradient(180deg,#cfcfcf,#9e9e9e);
+        border-radius: 4px;
+        transition: height 120ms linear, transform 80ms linear, opacity 160ms;
+        opacity: 0.8;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.25) inset;
+        min-height: 16px;
+      }
+      .scroll:hover{
+        opacity: 1;
+      }
+      .scroll:hover .scrollBar{
+        opacity: 0.85;
+      }
+      #scrollBar.hidden { opacity: 0.25; }
+    </style>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/xterm@4.11.0/css/xterm.css"
+    />
+  </head>
+  <body>
+    <h1 style="margin-top:2vh; margin-bottom:2vh; font-size: 3em; text-decoration: none; color:black">Close Encounters of a Python Kind</h1>
+    
+    <div class="wrapper">
+      <div class="red"></div>
+      <div class="yellow"></div>
+      <div class="green"></div>
+      <span style="font-size: small">status:
+        <span style="font-size: small" id="status">connecting...</span>
+      </span>
+      <div class="terminalWrapper" style="width:650px; height: 375px; background-color: black; padding-left:3px;">
+        <div style="width: 97.5%; height: 95%;" id="terminal"></div>
+        <div class="scrollBar" id="scrollBar" aria-hidden="true">
+          <div class="scroll" id="scroll"></div>
+        </div>
+      </div>
+    </div>
+
+    <h2 style="font-size: 1.75em; font-weight: 500; margin-top: -1vh; margin-bottom: -1vh;">Brought to you by</h2>
+    <a href="https://www.njtd.xyz" target="_blank">
+      <div style="width:175px; height:175px; margin:auto;">
+        <img src="./images/rainbowLogo.png"
+          style="width:95%; height:95%; display:flex; flex-direction: column; justify-self: center; align-self: center; margin-top:10px;"
+          alt="NJTD Logo." title="NJTD" />
+      </div>
+    </a>
+
+    <script src="https://unpkg.com/xterm@4.11.0/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
+    <script src="https://unpkg.com/xterm-addon-web-links@0.4.0/lib/xterm-addon-web-links.js"></script>
+    <script src="https://unpkg.com/xterm-addon-search@0.8.0/lib/xterm-addon-search.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+
+    <script>
+      const term = new Terminal({
+        cursorBlink: true,
+        macOptionIsMeta: true,
+        scrollback: 9999,
+      });
+      const fit = new FitAddon.FitAddon();
+      term.loadAddon(fit);
+
+      term.open(document.getElementById("terminal"));
+      fit.fit()
+      term.onData((data) => {
+        console.log("browser terminal received new data:", data);
+        socket.emit("pty-input", { input: data });
+      });
+
+      const socket = io.connect("/pty");
+      const status = document.getElementById("status");
+
+      socket.on("connect", () => {
+        status.innerHTML =
+          '<span style="background-color: lightgreen;">connected</span>';
+      });
+
+      socket.on("disconnect", () => {
+        status.innerHTML =
+          '<span style="background-color: #ff0000;">disconnected</span>';
+      });
+
+    </script>
+    <script>
+      const scrollBar = document.getElementById('scrollBar');
+      const scrollThumb = document.getElementById('scroll');
+      // helper to find xterm viewport (works for xterm 4+)
+      function getViewport() {
+        // prefer API if available
+        if (term && term.element) {
+          return term.element.querySelector('.xterm-viewport');
+        }
+        // fallback
+        return document.querySelector('.xterm-viewport');
+      }
+
+      function updateScrollbar() {
+        const viewport = getViewport();
+        if (!viewport || !scrollBar) return;
+
+        const trackHeight = scrollBar.clientHeight;
+        const contentHeight = viewport.scrollHeight;
+        const visible = viewport.clientHeight;
+
+        if (contentHeight <= visible) {
+          // nothing to scroll
+          scrollThumb.style.height = `${trackHeight}px`;
+          scrollThumb.style.transform = `translateY(0px)`;
+          scrollBar.style.opacity = '0.25';
+          return;
+        }
+
+        const ratio = visible / contentHeight;
+        const minThumb = 16; // px
+        const thumbHeight = Math.max(minThumb, Math.floor(ratio * trackHeight));
+        const maxThumbTop = trackHeight - thumbHeight;
+        const scrollable = contentHeight - visible;
+        const top = Math.round((viewport.scrollTop / scrollable) * maxThumbTop);
+
+        scrollThumb.style.height = `${thumbHeight}px`;
+        scrollThumb.style.transform = `translateY(${top}px)`;
+        scrollBar.style.opacity = '0.85';
+      }
+
+      // update after terminal receives output
+      socket.on('pty-output', function (data) {
+        term.write(data.output);
+        // DOM may update async; schedule update on next tick
+        setTimeout(updateScrollbar, 0);
+      });
+
+      // update when user scrolls inside xterm
+      const viewport = getViewport();
+      if (viewport) {
+        viewport.addEventListener('scroll', updateScrollbar, { passive: true });
+      }
+
+      // xterm has onScroll API too — keep it in sync if present
+      if (term.onScroll) {
+        term.onScroll(() => updateScrollbar());
+      }
+
+      // resize/fit -> update
+      window.addEventListener('resize', updateScrollbar);
+
+      // optional: clicking the track jumps the terminal viewport
+      scrollBar.addEventListener('click', (ev) => {
+        const viewport = getViewport();
+        if (!viewport) return;
+        const rect = scrollBar.getBoundingClientRect();
+        const clickY = ev.clientY - rect.top;
+        const trackHeight = rect.height;
+        const contentHeight = viewport.scrollHeight;
+        const visible = viewport.clientHeight;
+        if (contentHeight <= visible) return;
+        // compute target scrollTop from click position
+        const ratio = clickY / trackHeight;
+        const targetScrollTop = Math.max(0, Math.min(contentHeight - visible, Math.round(ratio * (contentHeight - visible))));
+        viewport.scrollTop = targetScrollTop;
+        updateScrollbar();
+      });
+
+      // Drag support for the thumb
+      let dragging = false;
+      let dragStartY = 0;
+      let startTop = 0;
+
+      function onDragStart(e) {
+        e.preventDefault();
+        dragging = true;
+        dragStartY = (e.touches ? e.touches[0].clientY : e.clientY);
+        // compute current top in px from transform
+        const style = window.getComputedStyle(scrollThumb);
+        const matrix = style.transform || style.webkitTransform || '';
+        let ty = 0;
+        if (matrix && matrix !== 'none') {
+          const m = matrix.match(/matrix\([^,]+, [^,]+, [^,]+, [^,]+, ([^,]+), ([^\)]+)\)/);
+          if (m) ty = parseFloat(m[2]);
+        }
+        startTop = ty;
+        document.addEventListener('mousemove', onDragMove);
+        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('touchmove', onDragMove, {passive:false});
+        document.addEventListener('touchend', onDragEnd);
+      }
+
+      function onDragMove(e) {
+        if (!dragging) return;
+        e.preventDefault();
+        const clientY = (e.touches ? e.touches[0].clientY : e.clientY);
+        const delta = clientY - dragStartY;
+        const trackHeight = scrollBar.clientHeight;
+        const thumbHeight = scrollThumb.clientHeight;
+        const maxTop = trackHeight - thumbHeight;
+        let newTop = Math.max(0, Math.min(maxTop, startTop + delta));
+        // set transform
+        scrollThumb.style.transform = `translateY(${newTop}px)`;
+        // scroll terminal viewport accordingly
+        const viewport = getViewport();
+        if (!viewport) return;
+        const contentHeight = viewport.scrollHeight;
+        const visible = viewport.clientHeight;
+        if (contentHeight <= visible) return;
+        const scrollable = contentHeight - visible;
+        const ratio = newTop / maxTop;
+        viewport.scrollTop = Math.round(ratio * scrollable);
+      }
+
+      function onDragEnd(e) {
+        dragging = false;
+        document.removeEventListener('mousemove', onDragMove);
+        document.removeEventListener('mouseup', onDragEnd);
+        document.removeEventListener('touchmove', onDragMove);
+        document.removeEventListener('touchend', onDragEnd);
+      }
+
+      scrollThumb.addEventListener('mousedown', onDragStart);
+      scrollThumb.addEventListener('touchstart', onDragStart, {passive:false});
+
+      // ensure scrollbar is correct after initial terminal open + fit
+      setTimeout(updateScrollbar, 50);
+    </script>
+  </body>
+</html>

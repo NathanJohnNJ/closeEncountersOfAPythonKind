@@ -22,8 +22,25 @@ app = Flask(__name__, template_folder=".", static_folder=".", static_url_path=""
 app.config["SECRET_KEY"] = "secret!"
 # Per-client PTY state: map session id -> {fd, pid}
 app.config["clients"] = {}
-# Use eventlet async mode when available and allow cross-origin requests from the same origin.
-socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+
+# Choose an async mode for Flask-SocketIO. Prefer eventlet if available,
+# otherwise fall back to the standard threading mode. Some hosts (or
+# Python versions) may not support `eventlet`; this avoids crashing with
+# "Invalid async_mode specified" errors at startup.
+preferred_async = None
+try:
+    import eventlet  # type: ignore
+    # eventlet is present and importable — use it.
+    preferred_async = "eventlet"
+    # eventlet requires monkey patching for some libraries; do it early.
+    try:
+        eventlet.monkey_patch()
+    except Exception:
+        pass
+except Exception:
+    preferred_async = "threading"
+
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode=preferred_async)
 
 
 def set_winsize(fd, row, col, xpix=0, ypix=0):

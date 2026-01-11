@@ -248,7 +248,7 @@ def main():
     url = f"http://{display_host}:{args.port}/index.html"
     logging.info(f"serving on http://{args.host}:{args.port}")
     webbrowser.open_new_tab(url)
-    socketio.run(app, debug=args.debug, port=args.port, host=args.host)
+    socketio.run(app, debug=args.debug, port=args.port, host=args.host, allow_unsafe_werkzeug=True)
     
 
 

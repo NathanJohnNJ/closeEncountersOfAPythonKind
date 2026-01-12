@@ -150,6 +150,10 @@ fullMap = dimWhite+ """. -- . -- . -- . -- . -- . -- . -- .
 : -- : -- : -- : -- : -- : -- : -- :"""+brightGreen
 visits = []
 
+# Helper function to set current name for terminal
+def set_title(name):
+    print(f"[[__TITLE__:{name}]]", flush=True)
+
 #Beginning of game
 def title():
   print(Back.RESET + "")
@@ -169,6 +173,7 @@ def title():
   sleep(3)
   
 def rules():
+  set_title("rules:")
   print("")
   sleep(1)
   print(brightYellow + "Rules: You have 3 lives to escape this maze")
@@ -182,6 +187,7 @@ def rules():
 
 def intro():
   beginning()
+  set_title("intro:")
   sleep(1)
   print("")
   print("You've reached a turning point in the road and have a decision to make... Which way to go? You look left. The left turn seems to lead you down a pitch black, cold, damp corridor... You look right. The right turn seems to lead you down a smelly corridor with occasional bursts of steam shooting from cracks in the floor...")
@@ -189,10 +195,10 @@ def intro():
   sleep(3)
   print("You take a moment to consider how steam is trapped under a field of crops without the floor feeling hot. You also wonder who built a corridor in the middle of a field, before making your decision.")
   sleep(3)
-  rules()
   junction1()
   
 def aliens():
+  set_title("aliens:")
   print(brightCyan +'                  _____                                         ')
   print('              _.-"     "-._                     _____            ')
   print('             /    ' + brightGreen+')_-_(    '+brightCyan +'\\                _.-"     "-._        ')
@@ -207,10 +213,12 @@ def aliens():
   print(normalWhite+'        "-_    '+brightWhite+' O o O o O'+normalWhite+'     _-"    (                         ) ') 
   print('           "--.___________.--"        "-_    '+brightWhite+' O o O o O'+normalWhite+'     _-"  ')
   print('                                         "--.___________.--"     ')
+  print("")
   sleep(2)
   
 def beginning():
   aliens()
+  set_title("story:")
   print(brightMagenta + "'Well that was pointless!' You hear a strange, muffled voice say.")
   sleep(1)
   print("'Drop them back to their dying planet. Looks like we'll need to search another solar system if we want to find the secret to sustainability.'")
@@ -225,6 +233,9 @@ def beginning():
   sleep(0.5)
   print(brightMagenta + "'No, just chuck them out! We may as well have some fun with them though. Print our hardest labrynth in one of the crop fields and leave them in the middle. We can watch them try and escape before we go. I should have just enough time before Barbarella gets home from work.'")
   sleep(2)
+  rules()
+  set_title("story:")
+  sleep(3)
   print(brightCyan + "*Blink, blink, blink*")
   sleep(3)
   print(brightGreen + "You rub your eyes trying to help see in the engulfing darkness. A putrid smell fills the air, and your head hurts. Clambering to your feet you reach out and feel huge crops surrounding you, but notice a narrow gap. Thus, your fight to escape the maze begins....")
@@ -253,6 +264,7 @@ def map(visits):
 
 #Junctions
 def junction1():
+  set_title("junction1:")
   global lives
   global visits
   global retries
@@ -269,10 +281,8 @@ def junction1():
     choice = str(input())
     if choice.lower() == "left":
       junction3()
-      break
     elif choice.lower() == "right":
       junction2()
-      break
     else:
       print(brightYellow + "Please enter 'left' or 'right'.")
       retries += 1
@@ -287,6 +297,7 @@ def junction1():
     death()
           
 def junction2():
+  set_title("junction2:")
   global visits
   global lives
   global retries
@@ -321,6 +332,7 @@ def junction2():
     death()
           
 def junction3():
+  set_title("junction3:")
   global lives
   global visits
   global retries
@@ -339,13 +351,13 @@ def junction3():
   directions = ["right", "left"]
   print(brightGreen + "You run into another junction, take the correct turn and you'll be one step closer to making it out of the maze alive!")
   print(brightWhite + "Which way will you go?")
-  userInput = ""
   
   for retries in range(5):
-    userInput = input().lower()
+    userInput = ""
     while userInput not in directions:
       print(brightYellow + "Options:Right/Left")
       retries += 1
+      userInput = input().lower()
       if userInput == "left":
         print("You take a few steps down the dark corridor and the wall of the maze closes behind you!  You took the wrong turn!")
         q3()
@@ -364,6 +376,7 @@ def junction3():
     death()
           
 def junction4(): 
+  set_title("junction4:")
   global visits
   global lives
   global retries
@@ -395,6 +408,7 @@ def junction4():
     death()
       
 def junction5():
+  set_title("junction5:")
   global visits
   global lives
   global retries
@@ -426,6 +440,7 @@ def junction5():
 
 #Questions
 def q1():
+  set_title("question1:")
   global lives
   user_options = ["true", "false"]
   print(brightCyan + "There are 450 programming languages used in coding.")
@@ -450,6 +465,7 @@ def q1():
         junction1()
               
 def q2():
+  set_title("question2:")
   global lives
   options=["a","b","c"]
   print(brightCyan + "You find a sign that reads: The world's longest maze is located in Yancheng, China and is 36,000 meters squared in size, What is it's length?") 
@@ -478,6 +494,7 @@ def q2():
         junction1()
               
 def q3():
+  set_title("question3:")
   print(brightGreen + "To go back you'll need to bypass the security system by answering the following question correctly.")
   global lives
   question = "What would a nihilist coder's approach to a morning cup of coffee be?"
@@ -488,7 +505,7 @@ def q3():
     "D) Mixing coding marathons with energy drinks to maximize the futility of existence"
   ]
   print(brightCyan + f"{question}")
-  print(brightWhite + options)
+  print(brightWhite + f"{options}")
   options = ["A", "B", "C", "D"]
   userinput = ""
   while userinput not in options:
@@ -515,6 +532,7 @@ def q3():
       junction3()
           
 def q4():
+  set_title("question4:")
   global lives
   print(brightCyan + "You must be lost! Before moving ahead, answer me this.. 'True or False: A potato was the first vegetable to be planted on the space shuttle.', if you answer incorrectly you will lose a life'")
   userinput = "".lower()
@@ -542,6 +560,7 @@ def q4():
         junction1()
           
 def q5():
+  set_title("question5:")
   global lives
   user_options = ["true", "false"]
   print(brightCyan + "You see a sign that reads 'true or false: A group of jellyfish is called a smack', If you answer incorrectly you will lose a life and be returned to the start of the maze: ")
@@ -575,61 +594,64 @@ def q5():
             
 #End of game
 def escape():
-    print(brightGreen + "Congratulations you have escaped the maze ")
-    print(fullMap)
-    print("Would you like to restart? ")
-    print("Options: Yes/No: ")
-    user_Input = "".lower()
-    user_Input = input()
-    if user_Input == "no":
-        print("You choose to forget this ever happened and escape...")
-        sleep(2)
-        print('"Where am I?"')
-        sleep(2)
-        credits()
-    elif user_Input == "yes":
-        # This will restart the game
-        print("For some reason you decided to return to the center of the maze")
-        sleep(2)
-        visits.remove(5)
-        visits.remove(4)
-        visits.remove(3)
-        if 2 in visits:
-            visits.remove(2)
-            junction1()
-        else:
-            junction1()
+  set_title("escape:")
+  print(brightGreen + "Congratulations you have escaped the maze ")
+  print(fullMap)
+  print(brightWhite + "Would you like to restart? ")
+  print(brightYellow + "Options: Yes/No: ")
+  user_Input = "".lower()
+  user_Input = input()
+  if user_Input == "no":
+    print(brightMagenta + "You choose to forget this ever happened and escape...")
+    sleep(2)
+    print(brightCyan + '"Where am I?"')
+    sleep(2)
+    credits()
+  elif user_Input == "yes":
+    # This will restart the game
+    print(brightYellow + "For some reason you decided to return to the center of the maze")
+    sleep(2)
+    visits.remove(5)
+    visits.remove(4)
+    visits.remove(3)
+    if 2 in visits:
+      visits.remove(2)
+      junction1()
+    else:
+      junction1()
       
 def death():
-    # This function runs if the player runs out of lives
-    print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
-    print(brightYellow+ "           |                                                 |")
-    print(dimMagenta+ "           +" + dimRed + "           ┌─┐┌─┐┌┬┐┌─┐  ┌─┐┬  ┬┌─┐┬─┐           " + dimMagenta + "+")
-    print(brightYellow+ "           |" + dimRed + "           │ ┬├─┤│││├┤   │ │└┐┌┘├┤ ├┬┘           " + brightYellow + "|")
-    print(dimMagenta+ "           +" + dimRed + "           └─┘┴ ┴┴ ┴└─┘  └─┘ └┘ └─┘┴└─           " + dimMagenta + "+")
-    print(brightYellow+ "           |                                                 |")
-    print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
-    credits()
-    sys.exit()
+  set_title("gameOver:")
+  # This function runs if the player runs out of lives
+  print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
+  print(brightYellow+ "           |                                                 |")
+  print(dimMagenta+ "           +" + dimRed + "           ┌─┐┌─┐┌┬┐┌─┐  ┌─┐┬  ┬┌─┐┬─┐           " + dimMagenta + "+")
+  print(brightYellow+ "           |" + dimRed + "           │ ┬├─┤│││├┤   │ │└┐┌┘├┤ ├┬┘           " + brightYellow + "|")
+  print(dimMagenta+ "           +" + dimRed + "           └─┘┴ ┴┴ ┴└─┘  └─┘ └┘ └─┘┴└─           " + dimMagenta + "+")
+  print(brightYellow+ "           |                                                 |")
+  print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
+  credits()
   
 def credits():
-    print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
-    print(brightYellow+ "           |                                                 |")
-    print(dimMagenta+ "           +                             " +dimMagenta+"     .--" +brightMagenta+".----. "+dimMagenta+"     +")
-    print(brightYellow+ "           |                            " +dimMagenta+"     / " +brightMagenta+" /      `\\ "+brightYellow+ "   |")
-    print(dimMagenta+ "           +" +brightBlue + "      ┌┬┐┌─┐┌┬┐┌─┐  ┌┐ ┬ ┬ " +dimMagenta+"      \\``" +brightMagenta+"\\  .--   \\"+dimMagenta+ "   +")
-    print(brightYellow+ "           |" +brightBlue+"      │││├─┤ ││├┤   ├┴┐└┬┘" +dimMagenta+"        \\__" +brightMagenta+"\\/ " +dimMagenta+"\\" +brightMagenta+" \\  :"+brightYellow+ "  "+brightYellow+ " |")
-    print(dimMagenta+ "           +" +brightBlue+ "      ┴ ┴┴ ┴─┴┘└─┘  └─┘ ┴  " +dimMagenta+"              ;" +brightMagenta+" ; | "+dimMagenta+ "  +")
-    print(brightYellow+ "           |"+ dimRed+"   _                           " +dimMagenta+"         /" +brightMagenta+" /  /  "+brightYellow+ ""+brightYellow+ " |")
-    print(dimMagenta+ "           +" + dimRed + "  |\\_\\_ __  __ _  _ __ __   " +dimMagenta+"            \\ " +brightMagenta+"\\  \\  "+dimMagenta+ " +")
-    print(brightYellow+ "           |"+dimRed+"  |"+brightBlue+"| |_"+dimRed+"\\"+brightBlue+"__"+dimRed+"\\/\\"+brightBlue+"_"+dimRed+"\\"+brightBlue+"_"+dimRed+"\\\\"+brightBlue+"_"+dimRed+"\\"+brightBlue+"__"+dimRed+"\\"+brightBlue+"___"+dimRed+"\\"+dimMagenta+"      ____   /" +brightMagenta+" :  | "+brightYellow+ "  |")
-    print(dimMagenta+ "           +" +dimRed+"  |"+brightBlue+"| __/ _ \\/ _` | '_ ` _  \\ "+dimMagenta+ "   / " +brightMagenta+"  /\\" +dimMagenta+" /" +brightMagenta+" /   :  " +dimMagenta+" +")
-    print(brightYellow+ "           |"+dimRed+"  |"+brightBlue+"| |_|  _/ (_| | |"+dimRed+"|"+brightBlue+"| |"+dimRed+"|"+brightBlue+"| | "+dimMagenta+"  /  " +brightMagenta+" /  '--    / "+brightYellow+ "  |")
-    print(dimMagenta+ "           +" + brightBlue+ "   \\___\\___|\\__,_|_|"+dimRed+"\\"+brightBlue+"|_|"+dimRed+"\\"+brightBlue+"|_|  "+dimMagenta+" \\'''" +brightMagenta+"\\        /  "+dimMagenta+"  +")
-    print(brightYellow+ "           |                       " +dimMagenta+"         \\ " +brightMagenta+"  \\     .'  " +brightYellow+ "   |")
-    print(dimMagenta+ "           +                          " +dimMagenta+"       `--" +brightMagenta+"^----'   " +dimMagenta+ "    +")
-    print(brightYellow+ "           |                                                 |")
-    print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
+  set_title("credits:")
+  print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
+  print(brightYellow+ "           |                                                 |")
+  print(dimMagenta+ "           +                             " +dimMagenta+"     .--" +brightMagenta+".----. "+dimMagenta+"     +")
+  print(brightYellow+ "           |                            " +dimMagenta+"     / " +brightMagenta+" /      `\\ "+brightYellow+ "   |")
+  print(dimMagenta+ "           +" +brightBlue + "      ┌┬┐┌─┐┌┬┐┌─┐  ┌┐ ┬ ┬ " +dimMagenta+"      \\``" +brightMagenta+"\\  .--   \\"+dimMagenta+ "   +")
+  print(brightYellow+ "           |" +brightBlue+"      │││├─┤ ││├┤   ├┴┐└┬┘" +dimMagenta+"        \\__" +brightMagenta+"\\/ " +dimMagenta+"\\" +brightMagenta+" \\  :"+brightYellow+ "  "+brightYellow+ " |")
+  print(dimMagenta+ "           +" +brightBlue+ "      ┴ ┴┴ ┴─┴┘└─┘  └─┘ ┴  " +dimMagenta+"              ;" +brightMagenta+" ; | "+dimMagenta+ "  +")
+  print(brightYellow+ "           |"+ dimRed+"   _                           " +dimMagenta+"         /" +brightMagenta+" /  /  "+brightYellow+ ""+brightYellow+ " |")
+  print(dimMagenta+ "           +" + dimRed + "  |\\_\\_ __  __ _  _ __ __   " +dimMagenta+"            \\ " +brightMagenta+"\\  \\  "+dimMagenta+ " +")
+  print(brightYellow+ "           |"+dimRed+"  |"+brightBlue+"| |_"+dimRed+"\\"+brightBlue+"__"+dimRed+"\\/\\"+brightBlue+"_"+dimRed+"\\"+brightBlue+"_"+dimRed+"\\\\"+brightBlue+"_"+dimRed+"\\"+brightBlue+"__"+dimRed+"\\"+brightBlue+"___"+dimRed+"\\"+dimMagenta+"      ____   /" +brightMagenta+" :  | "+brightYellow+ "  |")
+  print(dimMagenta+ "           +" +dimRed+"  |"+brightBlue+"| __/ _ \\/ _` | '_ ` _  \\ "+dimMagenta+ "   / " +brightMagenta+"  /\\" +dimMagenta+" /" +brightMagenta+" /   :  " +dimMagenta+" +")
+  print(brightYellow+ "           |"+dimRed+"  |"+brightBlue+"| |_|  _/ (_| | |"+dimRed+"|"+brightBlue+"| |"+dimRed+"|"+brightBlue+"| | "+dimMagenta+"  /  " +brightMagenta+" /  '--    / "+brightYellow+ "  |")
+  print(dimMagenta+ "           +" + brightBlue+ "   \\___\\___|\\__,_|_|"+dimRed+"\\"+brightBlue+"|_|"+dimRed+"\\"+brightBlue+"|_|  "+dimMagenta+" \\'''" +brightMagenta+"\\        /  "+dimMagenta+"  +")
+  print(brightYellow+ "           |                       " +dimMagenta+"         \\ " +brightMagenta+"  \\     .'  " +brightYellow+ "   |")
+  print(dimMagenta+ "           +                          " +dimMagenta+"       `--" +brightMagenta+"^----'   " +dimMagenta+ "    +")
+  print(brightYellow+ "           |                                                 |")
+  print(dimMagenta+ "           +" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+" +brightYellow+"-"+dimMagenta+"+")
+  sys.exit()
 
 #Begin the game
 title()

@@ -48,24 +48,16 @@ This project requires a persistent backend (Flask + Flask-SocketIO) that maintai
 
 I prepared a simple `render.yaml` and a `Procfile` so you can deploy to Render with automatic builds.
 
-Quick Render UI steps:
+### Quick Render UI steps
 
 1. Push your repository to GitHub (if not already).
-2. Go to https://dashboard.render.com and create a new Web Service.
+2. Go to [https://dashboard.render.com](https://dashboard.render.com) and create a new Web Service.
 3. Connect your GitHub repo, choose the `main` branch (or the branch you pushed), and Render will read `render.yaml` if present.
 4. Build command: `pip install -r requirements.txt` (this is set in `render.yaml`).
 5. Start command: `python main.py --host 0.0.0.0 --port $PORT` (also in `render.yaml` / `Procfile`).
 6. Deploy and watch the build logs; once live the service URL will host the app and the web terminal will connect to the backend.
 
-Notes & troubleshooting:
-- Ensure `requirements.txt` contains `eventlet` (already added) so Flask-SocketIO can use WebSockets on Render.
-- If you see Socket.IO connection errors, check the Render service logs for errors and confirm the service is listening on the `$PORT` environment variable.
-- For advanced setups you can provide a `Dockerfile` instead; let me know if you'd like me to add one.
+### Notes & troubleshooting
 
-Local testing reminder (same as above):
-```bash
-python3 -m venv .env
-source .env/bin/activate
-python3 -m pip install -r requirements.txt
-python3 main.py --host 0.0.0.0 --port 5050
-```
+- Ensure `requirements.txt` contains `eventlet` so Flask-SocketIO can use WebSockets on Render.
+- If you see Socket.IO connection errors, check the Render service logs for errors and confirm the service is listening on the `$PORT` environment variable.

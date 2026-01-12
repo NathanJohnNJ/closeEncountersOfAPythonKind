@@ -17,7 +17,7 @@
       .wrapper{
         width:675px;
         height:410px;
-        padding: 4px 3px;
+        padding: 0 3px 4px 3px;
         display:flex;
         flex-direction: column;
         justify-content: center;
@@ -27,6 +27,16 @@
         position:relative;
         margin-bottom: 10px;
         box-shadow: -0.75px 0.75px 3.5px 1.5px rgba(0, 0, 0, 0.5);
+      }
+      .topBar{
+        width: 101%;
+        height: 34px;
+        display:flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        background-color: rgba(0, 0, 0, 0.15);
+        border-top-right-radius: 20px;
+        border-top-left-radius: 20px;
       }
       .red, .green, .yellow{
         border-radius: 50%;
@@ -50,6 +60,13 @@
       .green{
         left: 62px;
         background-color: rgb(5, 188, 5);
+      }
+      .termTitle{
+        color: white;
+        font-size:larger;
+        place-self: center;
+        justify-self: center;
+        width: 100%;
       }
       .terminalWrapper{
         display: flex;
@@ -93,12 +110,15 @@
     <h1 style="margin-top:2vh; margin-bottom:2vh; font-size: 3em; text-decoration: none; color:black">Close Encounters of a Python Kind</h1>
     
     <div class="wrapper">
-      <div class="red"></div>
-      <div class="yellow"></div>
-      <div class="green"></div>
-      <span style="font-size: small">status:
-        <span style="font-size: small" id="status">connecting...</span>
-      </span>
+      <div class="topBar">
+        <div class="red"></div>
+        <div class="yellow"></div>
+        <div class="green"></div>
+        <span id="title" class="termTitle">closeEncountersOfAPythonKind/game.py - <span id="titleExtension" style="margin-left: 4px;"></span></span>
+        <span style="font-size: small; margin-right:15px; margin-bottom: -1px; justify-self: flex-end; white-space: nowrap; box-shadow:inset 0.5px 0.5px 2px 0.5px rgba(0,0,0,0.5),inset -0.5px -0.5px 2px 0.5px rgba(0,0,0,0.5),0.5px 0.5px 1px 0.5px rgba(0,0,0,0.35), -0.5px -0.5px 1px 0.5px rgba(0,0,0,0.35); padding:1.5px 0 1.5px 2px;">status:
+          <span style="font-size: small; padding: 0 3px; margin-left: -4px" id="status">connecting...</span>
+        </span>
+      </div>
       <div class="terminalWrapper" style="width:650px; height: 375px; background-color: black; padding-left:3px;">
         <div style="width: 97.5%; height: 95%;" id="terminal"></div>
         <div class="scrollBar" id="scrollBar" aria-hidden="true">
@@ -143,12 +163,12 @@
 
       socket.on("connect", () => {
         status.innerHTML =
-          '<span style="background-color: lightgreen;">connected</span>';
+          '<span style="background-color: lightgreen; padding: 0 3px;margin-left: -4px">connected</span>';
       });
 
       socket.on("disconnect", () => {
         status.innerHTML =
-          '<span style="background-color: #ff0000;">disconnected</span>';
+          '<span style="background-color: #ff0000; padding: 0 3px;margin-left: -4px">disconnected</span>';
       });
 
     </script>
@@ -194,8 +214,22 @@
       }
 
       // update after terminal receives output
+      // This handler also looks for special title markers emitted by the
+      // Python game process in the format [[__TITLE__:functionName]] and
+      // updates the #titleExtension span accordingly.
       socket.on('pty-output', function (data) {
-        term.write(data.output);
+        const raw = data.output || '';
+        const titleRegex = /\[\[__TITLE__:(.+?)\]\]/g;
+        let cleaned = raw;
+        let match;
+        while ((match = titleRegex.exec(raw)) !== null) {
+          const newTitle = match[1];
+          const el = document.getElementById('titleExtension');
+          if (el) el.textContent = newTitle;
+          // remove the marker from the output that will be written to the terminal
+          cleaned = cleaned.replace(match[0], '');
+        }
+        if (cleaned.length) term.write(cleaned);
         // DOM may update async; schedule update on next tick
         setTimeout(updateScrollbar, 0);
       });
